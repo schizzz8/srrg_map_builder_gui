@@ -1,0 +1,2 @@
+add_subdirectory(apps)
+add_subdirectory(srrg_map_builder_viewers)
