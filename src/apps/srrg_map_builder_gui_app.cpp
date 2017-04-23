@@ -48,15 +48,16 @@ void printBanner() {
 
 int main (int argc, char** argv) {
     if (argc<2 || ! strcmp(argv[1],"-h")) {
+        cerr << "in" << endl;
         printBanner();
         return 0 ;
     }
     int depth = 2;
     float range = 1;
     bool visualize = false;
-    float resolution = 0.025;
-    float distance_threshold = 5;
-    float connectivity_threshold = 5;
+    float resolution = 0.01;
+    float distance_threshold = 2;
+    float connectivity_threshold = 0.01;
     std::string filename = "";
     std::string output_filename="";
 
