@@ -24,9 +24,16 @@ using namespace srrg_core_map;
 
 
 const char* banner[]= {
-    "fps_lmap_viewer_app: example on how to show/load a set of boss objects constituting a boss map",
+    "srrg_map_builder_gui_app: offline map builder to convert chunks of trajectory into a set of navigable maps",
     "usage:",
-    " fps_lmap_viewer_app  <boss filename>",
+    "srrg_map_builder_gui_app [options] <boss filename>",
+    "where:",
+    "  -d:     [int] quadtree depth, default: 3",
+    "  -range: [float] range in meters to enlarge quadtree bounding box, default: 1",
+    "  -r:     [float] sparse grid resolution in meters/cell, default: 0.01",
+    "  -dth:   [float] distance threshold in meters to check for local maps connectivity, default: 5",
+    "  -cth:   [float] minimum percentage of overlap for two local maps to be connected, default: 0.01",
+    "  -o:     [string] output file name, default: empty",
     0
 };
 
@@ -44,30 +51,30 @@ int main (int argc, char** argv) {
         return 0 ;
     }
     int depth = 2;
+    float range = 1;
     float resolution = 0.025;
-    float voxel_size = 0.02;
     float distance_threshold = 5;
-    int connected_points = 1000;
+    float connectivity_threshold = 5;
     std::string filename = "";
     std::string output_filename="";
 
     int c = 1;
     while(c<argc){
-        if(! strcmp(argv[c],"-depth")){
+        if(! strcmp(argv[c],"-d")){
             c++;
             depth = atoi(argv[c]);
-        }else if(! strcmp(argv[c],"-res")){
+        }else if(! strcmp(argv[c],"-r")){
             c++;
             resolution = atof(argv[c]);
-        }else if(! strcmp(argv[c],"-vsize")){
+        }else if(! strcmp(argv[c],"-range")){
             c++;
-            voxel_size = atof(argv[c]);
+            range = atof(argv[c]);
         }else if(! strcmp(argv[c],"-dth")){
             c++;
             distance_threshold = atof(argv[c]);
-        }else if(! strcmp(argv[c],"-cp")){
+        }else if(! strcmp(argv[c],"-cth")){
             c++;
-            connected_points = atoi(argv[c]);
+            connectivity_threshold = atoi(argv[c]);
         }else if (! strcmp(argv[c], "-o")){
             c++;
             output_filename = argv[c];
@@ -111,7 +118,7 @@ int main (int argc, char** argv) {
 
     cerr << "Executing connectivity refinement for " << clusters->size() << " local maps" << endl;
     cerr << "Distance threshold: " << distance_threshold << "m" << endl;
-    Linker linker(distance_threshold,resolution);
+    Linker linker(distance_threshold,connectivity_threshold,resolution);
     linker.setInput(clusters);
     BinaryNodeRelationSet* edges = linker.execute();
 
