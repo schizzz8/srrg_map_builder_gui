@@ -31,6 +31,7 @@ const char* banner[]= {
     "  -d:     [int] quadtree depth, default: 3",
     "  -range: [float] range in meters to enlarge quadtree bounding box, default: 1",
     "  -r:     [float] sparse grid resolution in meters/cell, default: 0.01",
+    "  -v:     [bool] activate visualization mode, default: false",
     "  -dth:   [float] distance threshold in meters to check for local maps connectivity, default: 5",
     "  -cth:   [float] minimum percentage of overlap for two local maps to be connected, default: 0.01",
     "  -o:     [string] output file name, default: empty",
@@ -38,11 +39,11 @@ const char* banner[]= {
 };
 
 void printBanner() {
-  const char** b = banner;
-  while(*b) {
-    cout << *b << endl;
-    b++;
-  }
+    const char** b = banner;
+    while(*b) {
+        cout << *b << endl;
+        b++;
+    }
 }
 
 int main (int argc, char** argv) {
@@ -52,6 +53,7 @@ int main (int argc, char** argv) {
     }
     int depth = 2;
     float range = 1;
+    bool visualize = false;
     float resolution = 0.025;
     float distance_threshold = 5;
     float connectivity_threshold = 5;
@@ -69,6 +71,8 @@ int main (int argc, char** argv) {
         }else if(! strcmp(argv[c],"-range")){
             c++;
             range = atof(argv[c]);
+        }else if(! strcmp(argv[c],"-v")){
+            visualize = true;
         }else if(! strcmp(argv[c],"-dth")){
             c++;
             distance_threshold = atof(argv[c]);
@@ -98,15 +102,20 @@ int main (int argc, char** argv) {
             objects.push_back(o);
     }
 
-    cerr << "Running clustering algorithm for " << lmaps->size() << " maps" << endl;
-    cerr << "Depth: " << depth << endl;
-    cerr << "Traversability Map resolution: " << resolution << endl;
+    cerr << "Read " << lmaps->size() << " maps" << endl;
+    cerr << "Running merging algorithm with the following parameters: " << endl;
+    cerr << "Quadtree depth: " << depth << endl;
+    cerr << "Bounding box range: " << range << endl;
+    cerr << "Sparse grid resolution: " << resolution << endl;
 
     Merger merger (depth,resolution);
     merger.computeBoundingBox(lmaps);
     merger.buildQuadtree();
-    //merger.visualizeQuadtree();
-
+    if(visualize){
+        cerr << "Visualizing quadtree!" << endl;
+        merger.visualizeQuadtree();
+        return 0;
+    }
     MapNodeList* clusters = merger.execute();
 
     for(MapNodeList::iterator it = clusters->begin(); it != clusters->end(); it++){
@@ -116,8 +125,11 @@ int main (int argc, char** argv) {
     }
     cerr << "--------------------------------------------------------------------------------" << endl;
 
-    cerr << "Executing connectivity refinement for " << clusters->size() << " local maps" << endl;
-    cerr << "Distance threshold: " << distance_threshold << "m" << endl;
+    cerr << "Read " << clusters->size() << " local maps" << endl;
+    cerr << "Executing connectivity refinement with the following paramters: " << endl;
+    cerr << "Distance threshold: " << distance_threshold << endl;
+    cerr << "Connectivity threshold: " << connectivity_threshold << endl;
+    cerr << "Sparse grid resolution: " << resolution << endl;
     Linker linker(distance_threshold,connectivity_threshold,resolution);
     linker.setInput(clusters);
     BinaryNodeRelationSet* edges = linker.execute();

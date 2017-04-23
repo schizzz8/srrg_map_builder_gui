@@ -10,7 +10,6 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 # To uncomment in the futute
  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=gnu++11")
 
-#set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
 find_package(srrg_cmake_modules REQUIRED)
 set(CMAKE_MODULE_PATH ${srrg_cmake_modules_INCLUDE_DIRS})
 set(CMAKE_BUILD_TYPE Release)
@@ -55,12 +54,6 @@ include_directories(${OPENGL_INCLUDE})
 find_package(QGLViewer REQUIRED)
 include_directories(${QGLVIEWER_INCLUDE_DIR})
 include_directories(${SRRG_QT_INCLUDE_DIRS})
-
-# Find Qt4
-#find_package(Qt4 REQUIRED)
-#include_directories(${QT_INCLUDES})
-
-
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
