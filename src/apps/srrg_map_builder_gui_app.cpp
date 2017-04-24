@@ -55,8 +55,8 @@ int main (int argc, char** argv) {
     int depth = 2;
     float range = 1;
     bool visualize = false;
-    float resolution = 0.01;
-    float distance_threshold = 2;
+    float resolution = 0.025;
+    float distance_threshold = 10;
     float connectivity_threshold = 0.01;
     std::string filename = "";
     std::string output_filename="";
@@ -109,7 +109,7 @@ int main (int argc, char** argv) {
     cerr << "Bounding box range: " << range << endl;
     cerr << "Sparse grid resolution: " << resolution << endl;
 
-    Merger merger (depth,resolution);
+    Merger merger (depth,resolution,range);
     merger.computeBoundingBox(lmaps);
     merger.buildQuadtree();
     if(visualize){
